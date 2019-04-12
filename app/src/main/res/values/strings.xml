@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SapienzaAddFace</string>
+    <string name="subscription_key">2582b9f1e2c24202b8de06cc4126a485</string>
+    <string name="service_host">https://westeurope.api.cognitive.microsoft.com/face/v1.0</string>
+</resources>
