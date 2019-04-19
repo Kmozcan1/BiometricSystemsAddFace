@@ -5,30 +5,35 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
+import com.microsoft.projectoxford.face.contract.CreatePersonResult;
 import com.microsoft.projectoxford.face.contract.Face;
 
-import java.io.InputStream;
-
-public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
+public class CreatePersonHelper extends AsyncTask<String, String, String> {
 
     Context context;
     ProgressDialog dialog;
 
-    public DetectionHelper(Context context) {
+    public CreatePersonHelper(Context context) {
         this.context = context;
+        dialog = new ProgressDialog(context);
     }
 
     @Override
-    protected Face[] doInBackground(InputStream... params) {
-        publishProgress("Detecting...");
+    protected String doInBackground(String... params) {
+        publishProgress("Creating Person...");
+        String groupId = params[0];
+        String name = params[1];
+
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            return faceServiceClient.detect(params[0], true, false, null);
+            CreatePersonResult result = faceServiceClient.createPerson(groupId, name, "User Data");
+            return result.personId.toString();
         } catch(Exception e) {
             publishProgress(e.getMessage());
             return null;
         }
     }
+
     @Override
     protected void onPreExecute() {
         dialog = new ProgressDialog(context);
@@ -42,7 +47,7 @@ public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
     }
 
     @Override
-    protected void onPostExecute(Face[] faces) {
+    protected void onPostExecute(String personId) {
         dialog.dismiss();
     }
 }

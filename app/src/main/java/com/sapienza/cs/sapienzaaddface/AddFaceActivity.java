@@ -13,11 +13,15 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.microsoft.projectoxford.face.contract.Face;
+import com.microsoft.projectoxford.face.contract.FaceRectangle;
 import com.sapienza.cs.sapienzaaddface.Adapters.FaceGridViewAdapter;
+import com.sapienza.cs.sapienzaaddface.Helpers.AddFaceHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.DetectionHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.ImageHelper;
 
@@ -33,9 +37,11 @@ import java.util.Date;
 public class AddFaceActivity extends Activity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int REQUEST_PICK_IMAGE = 0;
     private Uri photoURI;
-    FaceGridViewAdapter faceGridViewAdapter;
-    ProgressDialog mProgressDialog;
+    private FaceGridViewAdapter faceGridViewAdapter;
+    private InputStream imageInputStream;
+    private int mPosition;
 
 
     @Override
@@ -43,8 +49,18 @@ public class AddFaceActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addface);
 
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle(getString(R.string.progress_dialog_title));
+
+        GridView gridView = findViewById(R.id.gridview_faces);
+        gridView.setOnItemClickListener(new GridView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                mPosition = position;
+                new CreatePerson(AddFaceActivity.this).execute("123", "Kadir");
+
+            }
+        });
     }
 
     public void fromCamera(View view) {
@@ -70,32 +86,55 @@ public class AddFaceActivity extends Activity {
 
     }
 
+    public void fromGallery(View view) {
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+
+        startActivityForResult(chooserIntent, REQUEST_PICK_IMAGE);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode)
         {
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    Uri imageUri = Uri.parse(String.valueOf(photoURI));
-                    /*Bitmap bitmap = ImageHelper.loadSizeLimitedBitmapFromUri(
-                            imageUri, getContentResolver());
-                    if (bitmap != null) {
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        InputStream imageInputStream = new ByteArrayInputStream(stream.toByteArray());
-                        new DetectFace().execute(imageInputStream);
-                    }*/
-                    InputStream imageInputStream = null;
-                    try {
-                        imageInputStream = getContentResolver().openInputStream(photoURI);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    new DetectFace().execute(imageInputStream);
+                    initializeDetection();
                 }
                 break;
+            case REQUEST_PICK_IMAGE:
+                if (resultCode == RESULT_OK) {
+                    photoURI = data.getData();
+                    initializeDetection();
+                }
             default:
                 break;
         }
+    }
+
+    public void initializeDetection() {
+        try {
+            /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            Bitmap bitmap = ImageHelper.bitmapFromUri(getApplicationContext(), photoURI);
+            bitmap = ImageHelper.fixImageOrientation(getApplicationContext(), photoURI, bitmap);
+            int quality = 100;
+            if (bitmap.getByteCount() > 10000000) {
+                quality = 50;
+            }
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, stream);
+            //imageInputStream = new ByteArrayInputStream(stream.toByteArray());*/
+            imageInputStream = getContentResolver().openInputStream(photoURI);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        new DetectFace(AddFaceActivity.this).execute(imageInputStream);
     }
 
     String currentPhotoPath;
@@ -116,14 +155,20 @@ public class AddFaceActivity extends Activity {
     }
 
     private class DetectFace extends DetectionHelper {
+        public DetectFace(Context context) {
+            super(context);
+        }
+
         @Override
         protected void onPostExecute(Face[] faces) {
-            mProgressDialog.dismiss();
-            if (faces == null) {
+            super.onPostExecute(faces);
+            if (faces == null || faces.length == 0) {
                 Context context = getApplicationContext();
                 CharSequence text = "No faces were found in the photo!";
                 int duration = Toast.LENGTH_SHORT;
                 Toast.makeText(context, text, duration).show();
+                GridView gridView = findViewById(R.id.gridview_faces);
+                gridView.setAdapter(null);
             }
             else {
                 try {
@@ -135,16 +180,42 @@ public class AddFaceActivity extends Activity {
                 gridView.setAdapter(faceGridViewAdapter);
             }
         }
+    }
 
-        @Override
-        protected void onPreExecute() {
-            mProgressDialog.show();
+    private class CreatePerson extends CreatePersonHelper {
+        public CreatePerson(Context context) {
+            super(context);
         }
 
         @Override
-        protected void onProgressUpdate(String... progress) {
-            mProgressDialog.setMessage(progress[0]);
+        protected void onPostExecute(String personId) {
+            super.onPostExecute(personId);
+            FaceRectangle faceRect = faceGridViewAdapter.faceRectList.get(mPosition);
+            if (personId != null) {
+                try {
+                    new AddFace(AddFaceActivity.this).execute("123", personId, getContentResolver().openInputStream(photoURI), faceRect);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
+    private class AddFace extends AddFaceHelper {
+        public AddFace(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result != false) {
+                Intent intent = new Intent(AddFaceActivity.this, ViewPersonGroupActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
+
 
 }

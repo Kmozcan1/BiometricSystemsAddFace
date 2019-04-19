@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CreatePersonGroup().execute("Deneme", "Deneme", "Yanilma");
+        new CreatePersonGroup().execute("123", "123", "123");
 
         //TODO - Login/Register
     }
@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
     private class CreatePersonGroup extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
-            /*FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
+           /* FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
             try {
                 faceServiceClient.createPersonGroup(params[0], params[1], params[2]);
             }catch (Exception e) {
