@@ -2,19 +2,24 @@ package com.sapienza.cs.sapienzaaddface.Helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.AddPersistedFaceResult;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
+import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 
 import java.io.InputStream;
 import java.util.UUID;
 
-public class AddFaceHelper extends AsyncTask<Object, String, Boolean> {
+public class AddFaceHelper extends AsyncTask<Object, String, AddPersistedFaceResult> {
 
     Context context;
     ProgressDialog dialog;
+    Bitmap faceMap;
+    String groupId;
+    String userData;
 
     public AddFaceHelper(Context context) {
         this.context = context;
@@ -22,20 +27,23 @@ public class AddFaceHelper extends AsyncTask<Object, String, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Object... params) {
+    protected AddPersistedFaceResult doInBackground(Object... params) {
         publishProgress("Adding Face...");
-        String groupId =  (String) params[0];
+        groupId =  (String) params[0];
         UUID personId = UUID.fromString((String)params[1]);
         InputStream imageInputStream = (InputStream) params[2];
         FaceRectangle faceRectangle = (FaceRectangle) params[3];
+        faceMap = (Bitmap) params[4];
+        userData = (String) params[5];
 
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
+
         try {
-            AddPersistedFaceResult result =  faceServiceClient.addPersonFace(groupId, personId, imageInputStream, "Kadir", faceRectangle);
-            return true;
+            AddPersistedFaceResult result =  faceServiceClient.addPersonFace(groupId, personId, imageInputStream, userData, faceRectangle);
+            return result;
         } catch(Exception e) {
             publishProgress(e.getMessage());
-            return false;
+            return null;
         }
     }
     @Override
@@ -50,7 +58,9 @@ public class AddFaceHelper extends AsyncTask<Object, String, Boolean> {
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
+    protected void onPostExecute(AddPersistedFaceResult result) {
+        String imageString = ImageHelper.bitmapToString(faceMap);
+        FirebaseHelper.insertImage(new ImageObject(result.persistedFaceId, groupId, imageString, userData));
         dialog.dismiss();
     }
 }

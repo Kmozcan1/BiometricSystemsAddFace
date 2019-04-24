@@ -1,8 +1,6 @@
 package com.sapienza.cs.sapienzaaddface;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,19 +12,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.microsoft.projectoxford.face.contract.AddPersistedFaceResult;
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
 import com.sapienza.cs.sapienzaaddface.Adapters.FaceGridViewAdapter;
 import com.sapienza.cs.sapienzaaddface.Helpers.AddFaceHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.DetectionHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.ImageHelper;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,12 +33,15 @@ import java.util.Date;
 
 public class AddFaceActivity extends Activity {
 
-    static final int REQUEST_TAKE_PHOTO = 1;
-    public static final int REQUEST_PICK_IMAGE = 0;
+    private static final CharSequence NO_FACES_IN_PHOTO = "No faces were found in the photo!";
+    private static final CharSequence NAME_EMPTY = "Please submit a name for this photo";
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_PICK_IMAGE = 0;
     private Uri photoURI;
     private FaceGridViewAdapter faceGridViewAdapter;
     private InputStream imageInputStream;
     private int mPosition;
+
 
 
     @Override
@@ -56,8 +56,17 @@ public class AddFaceActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
+                EditText editTextName = findViewById(R.id.edittext_name);
                 mPosition = position;
-                new CreatePerson(AddFaceActivity.this).execute("123", "Kadir");
+                if (SubmissionValid()) {
+                    new CreatePerson(AddFaceActivity.this).execute("1",
+                            editTextName.getText().toString());
+                } else {
+                    Context context = getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast.makeText(context, NAME_EMPTY, duration).show();
+                }
+
 
             }
         });
@@ -119,19 +128,8 @@ public class AddFaceActivity extends Activity {
 
     public void initializeDetection() {
         try {
-            /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            Bitmap bitmap = ImageHelper.bitmapFromUri(getApplicationContext(), photoURI);
-            bitmap = ImageHelper.fixImageOrientation(getApplicationContext(), photoURI, bitmap);
-            int quality = 100;
-            if (bitmap.getByteCount() > 10000000) {
-                quality = 50;
-            }
-            bitmap.compress(Bitmap.CompressFormat.PNG, quality, stream);
-            //imageInputStream = new ByteArrayInputStream(stream.toByteArray());*/
             imageInputStream = getContentResolver().openInputStream(photoURI);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
         new DetectFace(AddFaceActivity.this).execute(imageInputStream);
@@ -164,9 +162,8 @@ public class AddFaceActivity extends Activity {
             super.onPostExecute(faces);
             if (faces == null || faces.length == 0) {
                 Context context = getApplicationContext();
-                CharSequence text = "No faces were found in the photo!";
                 int duration = Toast.LENGTH_SHORT;
-                Toast.makeText(context, text, duration).show();
+                Toast.makeText(context, NO_FACES_IN_PHOTO, duration).show();
                 GridView gridView = findViewById(R.id.gridview_faces);
                 gridView.setAdapter(null);
             }
@@ -191,9 +188,13 @@ public class AddFaceActivity extends Activity {
         protected void onPostExecute(String personId) {
             super.onPostExecute(personId);
             FaceRectangle faceRect = faceGridViewAdapter.faceRectList.get(mPosition);
+            Bitmap faceMap = faceGridViewAdapter.faceThumbnails.get(mPosition);
+
             if (personId != null) {
+                EditText editTextName = findViewById(R.id.edittext_name);
+                String name = editTextName.getText().toString();
                 try {
-                    new AddFace(AddFaceActivity.this).execute("123", personId, getContentResolver().openInputStream(photoURI), faceRect);
+                    new AddFace(AddFaceActivity.this).execute("1", personId, getContentResolver().openInputStream(photoURI), faceRect, faceMap, name);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -207,13 +208,21 @@ public class AddFaceActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(AddPersistedFaceResult result) {
             super.onPostExecute(result);
-            if (result != false) {
+            if (result != null) {
                 Intent intent = new Intent(AddFaceActivity.this, ViewPersonGroupActivity.class);
                 startActivity(intent);
             }
         }
+    }
+
+    private boolean SubmissionValid() {
+        EditText editTextName = findViewById(R.id.edittext_name);
+        if (editTextName.getText().toString().equals("")) {
+            return false;
+        }
+        return true;
     }
 
 

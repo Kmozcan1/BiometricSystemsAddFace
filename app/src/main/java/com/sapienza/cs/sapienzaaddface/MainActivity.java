@@ -8,8 +8,11 @@ import android.os.Bundle;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.rest.ClientException;
 import com.sapienza.cs.sapienzaaddface.Helpers.ConnectionHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
+import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class MainActivity extends Activity {
 
@@ -17,7 +20,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CreatePersonGroup().execute("123", "123", "123");
+        new CreatePersonGroup().execute("1", "1234", "1234");
 
         //TODO - Login/Register
     }
@@ -30,7 +33,7 @@ public class MainActivity extends Activity {
     private class CreatePersonGroup extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
-           /* FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
+            /*FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
             try {
                 faceServiceClient.createPersonGroup(params[0], params[1], params[2]);
             }catch (Exception e) {

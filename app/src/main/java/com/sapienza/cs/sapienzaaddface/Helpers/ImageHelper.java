@@ -32,24 +32,17 @@
 //
 package com.sapienza.cs.sapienzaaddface.Helpers;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.util.Base64;
 
-import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -58,185 +51,18 @@ import java.io.InputStream;
  */
 public class ImageHelper {
 
-    // The maximum side length of the image to detect, to keep the size of image less than 4MB.
-    // Resize the image if its side length is larger than the maximum.
-    private static final int IMAGE_MAX_SIDE_LENGTH = 1280;
 
     // Ratio to scale a detected face rectangle, the face rectangle scaled up looks more natural.
     private static final double FACE_RECT_SCALE_RATIO = 1.3;
 
-    // Decode image from imageUri, and resize according to the expectedMaxImageSideLength
-    // If expectedMaxImageSideLength is
-    //     (1) less than or equal to 0,
-    //     (2) more than the actual max size length of the bitmap
-    //     then return the original bitmap
-    // Else, return the scaled bitmap
-    public static Bitmap loadSizeLimitedBitmapFromUri(
-            Uri imageUri,
-            ContentResolver contentResolver) {
-        try {
-            // Load the image into InputStream.
-            InputStream imageInputStream = contentResolver.openInputStream(imageUri);
-
-            // For saving memory, only decode the image meta and get the side length.
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            Rect outPadding = new Rect();
-            BitmapFactory.decodeStream(imageInputStream, outPadding, options);
-
-            // Calculate shrink rate when loading the image into memory.
-            int maxSideLength =
-                    options.outWidth > options.outHeight ? options.outWidth: options.outHeight;
-            options.inSampleSize = 1;
-            options.inSampleSize = calculateSampleSize(maxSideLength, IMAGE_MAX_SIDE_LENGTH);
-            options.inJustDecodeBounds = false;
-            if (imageInputStream != null) {
-                imageInputStream.close();
-            }
-
-            // Load the bitmap and resize it to the expected size length
-            imageInputStream = contentResolver.openInputStream(imageUri);
-            Bitmap bitmap = BitmapFactory.decodeStream(imageInputStream, outPadding, options);
-            maxSideLength = bitmap.getWidth() > bitmap.getHeight()
-                    ? bitmap.getWidth(): bitmap.getHeight();
-            double ratio = IMAGE_MAX_SIDE_LENGTH / (double) maxSideLength;
-            if (ratio < 1) {
-                bitmap = Bitmap.createScaledBitmap(
-                        bitmap,
-                        (int)(bitmap.getWidth() * ratio),
-                        (int)(bitmap.getHeight() * ratio),
-                        false);
-            }
-
-            return bitmap;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    // Draw detected face rectangles in the original image. And return the image drawn.
-    // If drawLandmarks is set to be true, draw the five main landmarks of each face.
-    public static Bitmap drawFaceRectanglesOnBitmap(
-            Bitmap originalBitmap, Face[] faces, boolean drawLandmarks) {
-        Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.GREEN);
-        int stokeWidth = Math.max(originalBitmap.getWidth(), originalBitmap.getHeight()) / 100;
-        if (stokeWidth == 0) {
-            stokeWidth = 1;
-        }
-        paint.setStrokeWidth(stokeWidth);
-
-        if (faces != null) {
-            for (Face face : faces) {
-                FaceRectangle faceRectangle =
-                        calculateFaceRectangle(bitmap, face.faceRectangle, FACE_RECT_SCALE_RATIO);
-
-                canvas.drawRect(
-                        faceRectangle.left,
-                        faceRectangle.top,
-                        faceRectangle.left + faceRectangle.width,
-                        faceRectangle.top + faceRectangle.height,
-                        paint);
-
-                if (drawLandmarks) {
-                    int radius = face.faceRectangle.width / 30;
-                    if (radius == 0) {
-                        radius = 1;
-                    }
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setStrokeWidth(radius);
-
-                    canvas.drawCircle(
-                            (float) face.faceLandmarks.pupilLeft.x,
-                            (float) face.faceLandmarks.pupilLeft.y,
-                            radius,
-                            paint);
-
-                    canvas.drawCircle(
-                            (float) face.faceLandmarks.pupilRight.x,
-                            (float) face.faceLandmarks.pupilRight.y,
-                            radius,
-                            paint);
-
-                    canvas.drawCircle(
-                            (float) face.faceLandmarks.noseTip.x,
-                            (float) face.faceLandmarks.noseTip.y,
-                            radius,
-                            paint);
-
-                    canvas.drawCircle(
-                            (float) face.faceLandmarks.mouthLeft.x,
-                            (float) face.faceLandmarks.mouthLeft.y,
-                            radius,
-                            paint);
-
-                    canvas.drawCircle(
-                            (float) face.faceLandmarks.mouthRight.x,
-                            (float) face.faceLandmarks.mouthRight.y,
-                            radius,
-                            paint);
-
-                    paint.setStyle(Paint.Style.STROKE);
-                    paint.setStrokeWidth(stokeWidth);
-                }
-            }
-        }
-
-        return bitmap;
-    }
-
-    // Highlight the selected face thumbnail in face list.
-    public static Bitmap highlightSelectedFaceThumbnail(Bitmap originalBitmap) {
-        Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.parseColor("#3399FF"));
-        int stokeWidth = Math.max(originalBitmap.getWidth(), originalBitmap.getHeight()) / 10;
-        if (stokeWidth == 0) {
-            stokeWidth = 1;
-        }
-        bitmap.getWidth();
-        paint.setStrokeWidth(stokeWidth);
-        canvas.drawRect(
-                0,
-                0,
-                bitmap.getWidth(),
-                bitmap.getHeight(),
-                paint);
-
-        return bitmap;
-    }
-
     // Crop the face thumbnail out from the original image.
     // For better view for human, face rectangles are resized to the rate faceRectEnlargeRatio.
-    public static Bitmap generateFaceThumbnail(
-            Bitmap originalBitmap,
-            FaceRectangle faceRectangle) throws IOException {
+    public static Bitmap generateFaceThumbnail(Bitmap originalBitmap, FaceRectangle faceRectangle) {
         FaceRectangle faceRect =
                 calculateFaceRectangle(originalBitmap, faceRectangle, FACE_RECT_SCALE_RATIO);
 
         return Bitmap.createBitmap(
                 originalBitmap, faceRect.left, faceRect.top, faceRect.width, faceRect.height);
-    }
-
-    // Return the number of times for the image to shrink when loading it into memory.
-    // The SampleSize can only be a final value based on powers of 2.
-    private static int calculateSampleSize(int maxSideLength, int expectedMaxImageSideLength) {
-        int inSampleSize = 1;
-
-        while (maxSideLength > 2 * expectedMaxImageSideLength) {
-            maxSideLength /= 2;
-            inSampleSize *= 2;
-        }
-
-        return inSampleSize;
     }
 
     // Resize face rectangle, for better view for human
@@ -276,39 +102,12 @@ public class ImageHelper {
         return result;
     }
 
-    public static Bitmap scaleBitmap(Bitmap bm, int maxWidth, int maxHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-
-        Log.v("Pictures", "Width and height are " + width + "--" + height);
-
-        if (width > height) {
-            // landscape
-            float ratio = (float) width / maxWidth;
-            width = maxWidth;
-            height = (int)(height / ratio);
-        } else if (height > width) {
-            // portrait
-            float ratio = (float) height / maxHeight;
-            height = maxHeight;
-            width = (int)(width / ratio);
-        } else {
-            // square
-            height = maxHeight;
-            width = maxWidth;
-        }
-
-        Log.v("Pictures", "after scaling Width and height are " + width + "--" + height);
-
-        bm = Bitmap.createScaledBitmap(bm, width, height, true);
-        return bm;
-    }
-
     public static Bitmap bitmapFromUri(Context context, Uri uri) throws IOException {
         return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
     }
 
-    public static Bitmap fixImageOrientation(Context context, Uri faceUri, Bitmap bitmap) throws IOException {
+    public static Bitmap fixImageOrientation(Context context, Uri faceUri,
+                                             Bitmap bitmap) throws IOException {
         InputStream imageInputStream = context.getContentResolver().openInputStream(faceUri);
         ExifInterface ei = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -344,5 +143,13 @@ public class ImageHelper {
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
+    }
+
+    public static String bitmapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
     }
 }

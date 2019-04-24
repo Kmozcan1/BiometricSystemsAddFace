@@ -6,4 +6,7 @@
     <string name="button_camera">Camera</string>
     <string name="button_save">Save</string>
     <string name="progress_dialog_title">Please Wait</string>
+    <string name="addFaceHint">Select an image from camera or gallery, then tap to a desired face to add it to the database.</string>
+    <string name="addFaceButton">Add Face</string>
+    <string name="deleteHint">Long-tap an image to delete it.</string>
 </resources>

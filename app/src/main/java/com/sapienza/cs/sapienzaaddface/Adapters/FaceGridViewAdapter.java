@@ -8,64 +8,74 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
+import com.sapienza.cs.sapienzaaddface.Enumerations.FaceGridViewMode;
 import com.sapienza.cs.sapienzaaddface.Helpers.ImageHelper;
+import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 import com.sapienza.cs.sapienzaaddface.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class FaceGridViewAdapter extends BaseAdapter {
-    List<UUID> faceIdList;
     public static List<FaceRectangle> faceRectList;
-    List<Bitmap> faceThumbnails;
-    List<Boolean> faceChecked;
-
+    public static List<Bitmap> faceThumbnails;
+    private static List<ImageObject> faceList;
     private final Context context;
+    private static FaceGridViewMode faceGridViewMode;
 
 
     public FaceGridViewAdapter(Context context, Face[] detectionResult, Uri faceUri) throws IOException {
-
-        faceIdList = new ArrayList<>();
         faceRectList = new ArrayList<>();
         faceThumbnails = new ArrayList<>();
-        faceChecked = new ArrayList<>();
         this.context = context;
+        faceGridViewMode = FaceGridViewMode.Add;
         Bitmap bitmap = ImageHelper.bitmapFromUri(context, faceUri);
         bitmap = ImageHelper.fixImageOrientation(context, faceUri, bitmap);
-        //bitmap = ImageHelper.rotateBitmap(bitmap, ImageHelper.getImageRotationAngle(faceUri, context.getContentResolver()));
         if (detectionResult != null) {
             List<Face> faces = Arrays.asList(detectionResult);
             for (Face face : faces) {
-                try {
-                    // Crop face thumbnail with five main landmarks drawn from original image.
-                    faceThumbnails.add(ImageHelper.generateFaceThumbnail(
-                            bitmap, face.faceRectangle));
+                faceThumbnails.add(ImageHelper.generateFaceThumbnail(
+                        bitmap, face.faceRectangle));
+                faceRectList.add(face.faceRectangle);
 
-                    faceIdList.add(null);
-                    faceRectList.add(face.faceRectangle);
-
-                    faceChecked.add(false);
-                } catch (IOException e) {
-
-                }
             }
         }
     }
 
+    public FaceGridViewAdapter(Context context, List<ImageObject> faceList) {
+        this.context = context;
+        faceGridViewMode = FaceGridViewMode.View;
+        this.faceList = faceList;
+    }
+
     @Override
     public int getCount() {
-        return faceRectList.size();
+        switch (faceGridViewMode) {
+            case View:
+                return faceList.size();
+            case Add:
+                return faceRectList.size();
+            default:
+                return faceRectList.size();
+        }
     }
 
     @Override
     public Object getItem(int position) {
-        return faceRectList.get(position);
+        switch (faceGridViewMode) {
+            case View:
+                return faceList.get(position);
+            case Add:
+                return faceRectList.get(position);
+            default:
+                return faceRectList.get(position);
+        }
     }
 
     @Override
@@ -83,8 +93,15 @@ public class FaceGridViewAdapter extends BaseAdapter {
         }
         convertView.setId(position);
 
-        ((ImageView)convertView.findViewById(R.id.image_face))
-                .setImageBitmap(faceThumbnails.get(position));
+        switch (faceGridViewMode) {
+            case View:
+                ((ImageView)convertView.findViewById(R.id.image_face)).setImageBitmap(faceList.get(position).getImage());
+                ((TextView)convertView.findViewById(R.id.text_person)).setText(faceList.get(position).getPersonName());
+                break;
+            case Add:
+                ((ImageView)convertView.findViewById(R.id.image_face)).setImageBitmap(faceThumbnails.get(position));
+                break;
+        }
 
         return convertView;
     }

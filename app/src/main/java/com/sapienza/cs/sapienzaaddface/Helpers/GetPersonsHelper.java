@@ -5,28 +5,27 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
-import com.microsoft.projectoxford.face.contract.CreatePersonResult;
+import com.microsoft.projectoxford.face.contract.Person;
 
-public class CreatePersonHelper extends AsyncTask<String, String, String> {
+public class GetPersonsHelper extends AsyncTask<String, String, Person[]> {
 
     Context context;
     ProgressDialog dialog;
 
-    public CreatePersonHelper(Context context) {
+    public GetPersonsHelper(Context context) {
         this.context = context;
         dialog = new ProgressDialog(context);
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        publishProgress("Creating Person...");
+    protected Person[] doInBackground(String... params) {
+        publishProgress("Fetching Person List...");
         String groupId = params[0];
-        String name = params[1];
 
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            CreatePersonResult result = faceServiceClient.createPerson(groupId, name, "User Data");
-            return result.personId.toString();
+            Person[] personList = faceServiceClient.listPersons(groupId);
+            return personList;
         } catch(Exception e) {
             publishProgress(e.getMessage());
             return null;
@@ -46,7 +45,7 @@ public class CreatePersonHelper extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected void onPostExecute(String personId) {
+    protected void onPostExecute(Person[] personList) {
         dialog.dismiss();
     }
 }
