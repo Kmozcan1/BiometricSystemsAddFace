@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.microsoft.projectoxford.face.contract.Person;
@@ -22,13 +24,26 @@ import java.util.List;
 
 public class ViewPersonGroupActivity extends Activity {
     private FaceGridViewAdapter faceGridViewAdapter;
-
+    Button signOut;
+    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpersongroup);
         new ListPersons(ViewPersonGroupActivity.this).execute("1");
+
+        fAuth= FirebaseAuth.getInstance();
+        signOut= findViewById(R.id.button_signout);
+
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fAuth.signOut();
+                Intent intent = new Intent(ViewPersonGroupActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void addFace(View view) {

@@ -43,17 +43,14 @@ public class AddFaceActivity extends Activity {
     private FaceGridViewAdapter faceGridViewAdapter;
     private InputStream imageInputStream;
     private int mPosition;
-    Button signOut;
-    FirebaseAuth fAuth;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addface);
 
-        fAuth= FirebaseAuth.getInstance();
 
-        signOut= findViewById(R.id.button_signout);
         GridView gridView = findViewById(R.id.gridview_faces);
         gridView.setOnItemClickListener(new GridView.OnItemClickListener() {
             @Override
@@ -74,14 +71,7 @@ public class AddFaceActivity extends Activity {
 
             }
         });
-        signOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fAuth.signOut();
-                Intent intent = new Intent(AddFaceActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 
     public void fromCamera(View view) {

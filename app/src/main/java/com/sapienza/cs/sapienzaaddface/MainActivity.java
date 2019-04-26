@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
         if(firebaseAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(),AddFaceActivity.class));
+            startActivity(new Intent(getApplicationContext(),ViewPersonGroupActivity.class));
         }
         RegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginUserAccount(loginEmail.toString(), loginPassword.toString());
+                loginUserAccount(loginEmail.getText().toString(), loginPassword.getText().toString());
             }
         });
         newPassButton.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                             Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
 
-                            Intent intent = new Intent(MainActivity.this, AddFaceActivity.class);
+                            Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
                             startActivity(intent);
                         }
                         else {
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     progressBar.setVisibility(View.GONE);
-                    startActivity(new Intent(getApplicationContext(),AddFaceActivity.class));
+                    startActivity(new Intent(getApplicationContext(),ViewPersonGroupActivity.class));
                     finish();
                 }
                 else{
