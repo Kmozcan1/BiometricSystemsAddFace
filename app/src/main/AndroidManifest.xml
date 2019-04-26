@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.sapienza.cs.sapienzaaddface">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".Helpers.ConnectionHelper"
@@ -12,7 +17,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.sapienza.cs.sapienzaaddface.fileprovider"
@@ -20,29 +28,48 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".MainActivity">
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewPersonGroupActivity"
+        <activity
+            android:name=".ViewPersonGroupActivity"
             android:label="View Person Group"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity android:name=".AddFaceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewPassActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="New Password"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".AddFaceActivity"
             android:label="Add Face"
             android:launchMode="singleTop"
             android:parentActivityName=".ViewPersonGroupActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="Register Page"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
 </manifest>

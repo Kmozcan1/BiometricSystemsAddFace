@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "399700859208-0u4prn4i8b27ac979qvm4gq7psuq8j6i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sapienza.cs.sapienzaaddface",
+            "certificate_hash": "f565b19c96fe8784bfb84d1ab4974366548d339e"
+          }
+        },
+        {
           "client_id": "399700859208-vf7i252oekalgc7f46u9uu7h6p4c04rh.apps.googleusercontent.com",
           "client_type": 3
         }
