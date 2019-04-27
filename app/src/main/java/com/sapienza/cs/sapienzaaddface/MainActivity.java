@@ -147,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 GoogleSignInAccount account = result.getSignInAccount();
                 authWithGoogle(account);
             }
+            else
+                progressBar.setVisibility(View.GONE);
         }
     }
     private void authWithGoogle(GoogleSignInAccount account) {
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     finish();
                 }
                 else{
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(),"Auth Error",Toast.LENGTH_SHORT).show();
                 }
             }
