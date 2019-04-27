@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "399700859208-hp50r8lplup12vh4v6fdjp55v9tlbhtt.apps.googleusercontent.com",
+          "client_id": "399700859208-q25vgiflh0q39s21a3dk18e6osml9l67.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sapienza.cs.sapienzaaddface",
-            "certificate_hash": "f565b19c96fe8784bfb84d1ab4974366548d339e"
+            "certificate_hash": "66ace1a9d5ea00163c5e4d1dd4fe461c4da12164"
           }
         },
         {
