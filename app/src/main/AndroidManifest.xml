@@ -48,7 +48,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".NewPassActivity"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:theme="@style/Theme.AppCompat.DayNight"
             android:label="New Password"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
