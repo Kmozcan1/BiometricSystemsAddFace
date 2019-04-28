@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     if(task.getResult().getAdditionalUserInfo().isNewUser()) {
                         new CreatePersonGroup(MainActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
                     }
+                    else {
+                        Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
+                        startActivity(intent);
+                    }
                 }
                 else{
                     progressBar.setVisibility(View.GONE);

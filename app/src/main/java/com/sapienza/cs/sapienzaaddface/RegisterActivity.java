@@ -62,7 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
                                     progressBar.setVisibility(View.GONE);
                                     new CreatePersonGroup(RegisterActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
-                                    finish();
                                 }
                                 else{
                                     Toast.makeText(getApplicationContext(),"E-mail or password is wrong",Toast.LENGTH_SHORT).show();
