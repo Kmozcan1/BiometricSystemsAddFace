@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
             startActivity(intent);

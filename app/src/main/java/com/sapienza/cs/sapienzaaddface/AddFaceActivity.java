@@ -26,6 +26,7 @@ import com.sapienza.cs.sapienzaaddface.Helpers.AddFaceHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.DetectionHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.TrainPersonGroupHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -214,6 +215,20 @@ public class AddFaceActivity extends Activity {
         protected void onPostExecute(AddPersistedFaceResult result) {
             super.onPostExecute(result);
             if (result != null) {
+                new TrainPersonGroup(AddFaceActivity.this).execute(FirebaseHelper.getGroupId());
+            }
+        }
+    }
+
+    private class TrainPersonGroup extends TrainPersonGroupHelper {
+        public TrainPersonGroup(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result == true) {
                 Intent intent = new Intent(AddFaceActivity.this, ViewPersonGroupActivity.class);
                 startActivity(intent);
             }

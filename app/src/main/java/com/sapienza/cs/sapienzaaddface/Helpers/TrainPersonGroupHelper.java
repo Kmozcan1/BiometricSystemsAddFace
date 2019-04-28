@@ -7,24 +7,23 @@ import android.os.AsyncTask;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.CreatePersonResult;
 
-public class CreatePersonGroupHelper extends AsyncTask<String, String, Boolean> {
+public class TrainPersonGroupHelper extends AsyncTask<String, String, Boolean> {
 
     Context context;
     ProgressDialog dialog;
 
-    public CreatePersonGroupHelper(Context context) {
+    public TrainPersonGroupHelper(Context context) {
         this.context = context;
         dialog = new ProgressDialog(context);
     }
     @Override
     protected Boolean doInBackground(String... params) {
-        publishProgress("Creating Person Group...");
+        publishProgress("Training Person Group...");
         String groupId = params[0];
-        String name = params[1];
 
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            faceServiceClient.createPersonGroup(groupId, name, "User Data");
+            faceServiceClient.trainPersonGroup(groupId);
             return true;
         } catch(Exception e) {
             publishProgress(e.getMessage());

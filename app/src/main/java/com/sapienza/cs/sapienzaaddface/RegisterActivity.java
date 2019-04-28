@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
