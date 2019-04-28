@@ -83,7 +83,7 @@ public class ViewPersonGroupActivity extends Activity {
             super.onPostExecute(faceList);
 
             FirebaseHelper.getImages(ViewPersonGroupActivity.this,
-                    fAuth.getCurrentUser().getUid(), new FirebaseListener() {
+                    FirebaseHelper.getGroupId(), new FirebaseListener() {
                 @Override
                 public void onCallBack(Object value, ValueEventListener listener, DatabaseReference query) {
                     List<ImageObject> faceList;
