@@ -43,13 +43,13 @@ public class AddFaceActivity extends Activity {
     private FaceGridViewAdapter faceGridViewAdapter;
     private InputStream imageInputStream;
     private int mPosition;
-
+    FirebaseAuth fAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addface);
-
+        fAuth= FirebaseAuth.getInstance();
 
         GridView gridView = findViewById(R.id.gridview_faces);
         gridView.setOnItemClickListener(new GridView.OnItemClickListener() {
@@ -60,7 +60,7 @@ public class AddFaceActivity extends Activity {
                 EditText editTextName = findViewById(R.id.edittext_name);
                 mPosition = position;
                 if (SubmissionValid()) {
-                    new CreatePerson(AddFaceActivity.this).execute("1",
+                    new CreatePerson(AddFaceActivity.this).execute(fAuth.getCurrentUser().getUid(),
                             editTextName.getText().toString());
                 } else {
                     Context context = getApplicationContext();
@@ -196,7 +196,7 @@ public class AddFaceActivity extends Activity {
                 EditText editTextName = findViewById(R.id.edittext_name);
                 String name = editTextName.getText().toString();
                 try {
-                    new AddFace(AddFaceActivity.this).execute("1", personId, getContentResolver().openInputStream(photoURI), faceRect, faceMap, name);
+                    new AddFace(AddFaceActivity.this).execute(fAuth.getCurrentUser().getUid(), personId, getContentResolver().openInputStream(photoURI), faceRect, faceMap, name);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

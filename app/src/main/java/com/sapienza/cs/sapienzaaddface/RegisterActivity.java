@@ -1,5 +1,6 @@
 package com.sapienza.cs.sapienzaaddface;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonGroupHelper;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText email,password;
@@ -59,8 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
                                     progressBar.setVisibility(View.GONE);
-
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                    new CreatePersonGroup(RegisterActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
                                     finish();
                                 }
                                 else{
@@ -80,6 +81,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         if(firebaseAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),ViewPersonGroupActivity.class));
+        }
+
+    }
+    private class CreatePersonGroup extends CreatePersonGroupHelper {
+        public CreatePersonGroup(Context context){
+            super(context);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
         }
     }
 }

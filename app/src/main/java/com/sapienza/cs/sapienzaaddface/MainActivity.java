@@ -1,6 +1,7 @@
 package com.sapienza.cs.sapienzaaddface;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.rest.ClientException;
 import com.sapienza.cs.sapienzaaddface.Helpers.ConnectionHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonGroupHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
 import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CreatePersonGroup().execute("1", "1234", "1234");
+
 
 
         loginEmail =  findViewById(R.id.loginEmail);
@@ -118,9 +120,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
+                            if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                                new CreatePersonGroup(MainActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
+                            }
 
-                            Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
-                            startActivity(intent);
                         }
                         else {
                             Toast.makeText(getApplicationContext(), "Login failed! Please try again later", Toast.LENGTH_LONG).show();
@@ -128,6 +131,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         }
                     }
                 });
+    }
+    private class CreatePersonGroup extends CreatePersonGroupHelper{
+        public CreatePersonGroup(Context context){
+            super(context);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
+            startActivity(intent);
+        }
     }
 
 
@@ -172,29 +187,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-    private void createPersonGroup(String groupId) throws IOException, ClientException {
-
-
-    }
-
-    private class CreatePersonGroup extends AsyncTask<String, String, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            /*FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
-            try {
-                faceServiceClient.createPersonGroup(params[0], params[1], params[2]);
-            }catch (Exception e) {
-                publishProgress(e.getMessage());
-                return null;
-            }*/
-            return "ok";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            //Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
-            //startActivity(intent);
-        }
     }
 }
