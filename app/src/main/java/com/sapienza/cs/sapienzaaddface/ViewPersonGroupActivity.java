@@ -32,7 +32,18 @@ public class ViewPersonGroupActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpersongroup);
         fAuth= FirebaseAuth.getInstance();
-        new ListPersons(ViewPersonGroupActivity.this).execute(fAuth.getCurrentUser().getUid());
+
+        if (FirebaseHelper.getGroupId() == null) {
+            FirebaseHelper.getSingleUser(ViewPersonGroupActivity.this,
+                    fAuth.getCurrentUser().getUid(), new FirebaseListener() {
+                        @Override
+                        public void onCallBack(Object value, ValueEventListener listener, DatabaseReference query) {
+                            FirebaseHelper.setGroupId((String) value);
+                        }
+                    });
+        }
+
+        new ListPersons(ViewPersonGroupActivity.this).execute(FirebaseHelper.getGroupId());
 
 
         signOut= findViewById(R.id.button_signout);
@@ -60,7 +71,7 @@ public class ViewPersonGroupActivity extends Activity {
         @Override
         protected void onPostExecute(Person[] personList) {
             super.onPostExecute(personList);
-            new GetFaces(ViewPersonGroupActivity.this).execute(fAuth.getCurrentUser().getUid(), personList);
+            new GetFaces(ViewPersonGroupActivity.this).execute(FirebaseHelper.getGroupId(), personList);
         }
     }
 
@@ -71,7 +82,8 @@ public class ViewPersonGroupActivity extends Activity {
         protected void onPostExecute(List<ImageObject> faceList) {
             super.onPostExecute(faceList);
 
-            FirebaseHelper.getImages(ViewPersonGroupActivity.this,fAuth.getCurrentUser().getUid(), new FirebaseListener() {
+            FirebaseHelper.getImages(ViewPersonGroupActivity.this,
+                    fAuth.getCurrentUser().getUid(), new FirebaseListener() {
                 @Override
                 public void onCallBack(Object value, ValueEventListener listener, DatabaseReference query) {
                     List<ImageObject> faceList;

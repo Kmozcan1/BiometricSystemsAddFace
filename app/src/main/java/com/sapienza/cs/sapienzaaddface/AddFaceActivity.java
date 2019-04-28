@@ -25,6 +25,7 @@ import com.sapienza.cs.sapienzaaddface.Adapters.FaceGridViewAdapter;
 import com.sapienza.cs.sapienzaaddface.Helpers.AddFaceHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonHelper;
 import com.sapienza.cs.sapienzaaddface.Helpers.DetectionHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,7 +61,7 @@ public class AddFaceActivity extends Activity {
                 EditText editTextName = findViewById(R.id.edittext_name);
                 mPosition = position;
                 if (SubmissionValid()) {
-                    new CreatePerson(AddFaceActivity.this).execute(fAuth.getCurrentUser().getUid(),
+                    new CreatePerson(AddFaceActivity.this).execute(FirebaseHelper.getGroupId(),
                             editTextName.getText().toString());
                 } else {
                     Context context = getApplicationContext();
@@ -196,7 +197,7 @@ public class AddFaceActivity extends Activity {
                 EditText editTextName = findViewById(R.id.edittext_name);
                 String name = editTextName.getText().toString();
                 try {
-                    new AddFace(AddFaceActivity.this).execute(fAuth.getCurrentUser().getUid(), personId, getContentResolver().openInputStream(photoURI), faceRect, faceMap, name);
+                    new AddFace(AddFaceActivity.this).execute(FirebaseHelper.getGroupId(), personId, getContentResolver().openInputStream(photoURI), faceRect, faceMap, name);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }

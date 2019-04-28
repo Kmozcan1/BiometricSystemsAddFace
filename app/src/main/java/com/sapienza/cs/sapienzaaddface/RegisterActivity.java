@@ -17,6 +17,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonGroupHelper;
+import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText email,password;
@@ -61,7 +65,10 @@ public class RegisterActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
                                     progressBar.setVisibility(View.GONE);
-                                    new CreatePersonGroup(RegisterActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
+                                    SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                                    String groupId = ft.format(new Date());
+                                    FirebaseHelper.createUser(task.getResult().getUser().getUid(), groupId);
+                                    new CreatePersonGroup(RegisterActivity.this).execute(groupId, task.getResult().getUser().getDisplayName());
                                 }
                                 else{
                                     Toast.makeText(getApplicationContext(),"E-mail or password is wrong",Toast.LENGTH_SHORT).show();

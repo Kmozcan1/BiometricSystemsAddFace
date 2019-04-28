@@ -12,16 +12,27 @@ import com.google.firebase.database.ValueEventListener;
 import com.sapienza.cs.sapienzaaddface.Listeners.FirebaseListener;
 import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class FirebaseHelper {
     private static final FirebaseDatabase firebaseDatabase;
     private static Context context;
     private static ProgressDialog dialog;
+    private static String groupId;
     static {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.setPersistenceEnabled(true);
+    }
+
+    public static String getGroupId() {
+        return groupId;
+    }
+
+    public static void setGroupId(String id) {
+        groupId = id;
     }
 
     public static FirebaseDatabase getDatabase() {
@@ -63,6 +74,31 @@ public final class FirebaseHelper {
         }));
     }
 
+    public static final void getSingleUser(Context c, String uid, final FirebaseListener listener) {
+        context = c;
+        dialog = new ProgressDialog(context);
+        dialog.setTitle("Please Wait");
+        dialog.show();
+        dialog.setMessage("Getting User...");
+        final DatabaseReference reference = firebaseDatabase.getReference();
+        final Query query = reference.child("users").child(uid);
+        query.addValueEventListener((new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    String groupId = snapshot.child("groupId").getValue(String.class);
+                    listener.onCallBack(groupId, this, query.getRef());
+                }
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        }));
+    }
+
     public static final void insertImage(ImageObject image) {
         final DatabaseReference reference = getDatabase().getReference();
         reference.child("images").child(image.getImageIdAsString()).child("image").setValue(image.getImageString());
@@ -70,4 +106,9 @@ public final class FirebaseHelper {
         reference.child("images").child(image.getImageIdAsString()).child("personName").setValue(image.getPersonName());
     }
 
+    public static final void createUser(String uid, String groupId) {
+        final DatabaseReference reference = getDatabase().getReference();
+        reference.child("users").child(uid).setValue(uid);
+        reference.child("users").child(uid).child("groupid").setValue(groupId);
+    }
 }

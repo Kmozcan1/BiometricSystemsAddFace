@@ -36,6 +36,8 @@ import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
 import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -51,7 +53,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        if(FirebaseHelper.getGroupId() != null) {
+            FirebaseHelper.setGroupId(null);
+        }
 
         loginEmail =  findViewById(R.id.loginEmail);
         loginPassword =  findViewById(R.id.loginPassword);
@@ -174,7 +178,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if(task.isSuccessful()){
                     progressBar.setVisibility(View.GONE);
                     if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                        new CreatePersonGroup(MainActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
+                        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+                        String groupId = ft.format(new Date());
+                        FirebaseHelper.createUser(task.getResult().getUser().getUid(), groupId);
+                        new CreatePersonGroup(MainActivity.this).execute(groupId, task.getResult().getUser().getDisplayName());
                     }
                     else {
                         Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
