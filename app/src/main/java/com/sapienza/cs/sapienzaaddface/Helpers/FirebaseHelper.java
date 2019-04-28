@@ -109,6 +109,6 @@ public final class FirebaseHelper {
     public static final void createUser(String uid, String groupId) {
         final DatabaseReference reference = getDatabase().getReference();
         reference.child("users").child(uid).setValue(uid);
-        reference.child("users").child(uid).child("groupid").setValue(groupId);
+        reference.child("users").child(uid).child("groupId").setValue(groupId);
     }
 }
