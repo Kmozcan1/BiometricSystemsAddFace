@@ -52,8 +52,8 @@ public final class FirebaseHelper {
                         imageList.add(image);
                     }
                     listener.onCallBack(imageList, this, query.getRef());
-                    dialog.dismiss();
                 }
+                dialog.dismiss();
             }
 
             @Override

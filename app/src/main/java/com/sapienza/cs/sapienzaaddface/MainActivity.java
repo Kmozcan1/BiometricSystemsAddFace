@@ -120,9 +120,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
-                            if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                new CreatePersonGroup(MainActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
-                            }
+                            Intent intent = new Intent(MainActivity.this, ViewPersonGroupActivity.class);
+                            startActivity(intent);
 
                         }
                         else {
@@ -174,8 +173,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     progressBar.setVisibility(View.GONE);
-                    startActivity(new Intent(getApplicationContext(),ViewPersonGroupActivity.class));
-                    finish();
+                    if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                        new CreatePersonGroup(MainActivity.this).execute(task.getResult().getUser().getUid(), task.getResult().getUser().getDisplayName());
+                    }
                 }
                 else{
                     progressBar.setVisibility(View.GONE);
