@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewPassActivity">
+    tools:context=".activities.NewPassActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
@@ -30,9 +30,9 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginBottom="100dp"
-            android:textColor="#FFFF"
             android:id="@+id/sendButton"
-            android:background="@color/colorAccent"/>
+            android:background="@color/colorPrimary"
+            android:textColor="@color/black"/>
 
         <ProgressBar
             android:id="@+id/progressBar"

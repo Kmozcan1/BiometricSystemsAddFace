@@ -28,6 +28,8 @@
         android:layout_marginBottom="8dp"
         android:onClick="fromGallery"
         android:text="@string/button_gallery"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_camera"
         app:layout_constraintHorizontal_bias="0."
@@ -41,6 +43,8 @@
         android:layout_marginBottom="8dp"
         android:onClick="fromCamera"
         android:text="@string/button_camera"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -48,7 +52,7 @@
 
 
     <GridView
-        android:id="@+id/gridview_faces"
+        android:id="@+id/edit_gridview_face"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="5dp"

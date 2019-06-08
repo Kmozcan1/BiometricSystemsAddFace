@@ -1,9 +1,7 @@
-package com.sapienza.cs.sapienzaaddface;
+package com.sapienza.cs.sapienzaaddface.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,17 +26,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.microsoft.projectoxford.face.FaceServiceClient;
-import com.microsoft.projectoxford.face.rest.ClientException;
-import com.sapienza.cs.sapienzaaddface.Helpers.ConnectionHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonGroupHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
-import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
+import com.sapienza.cs.sapienzaaddface.helpers.CreatePersonGroupHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.FirebaseHelper;
+import com.sapienza.cs.sapienzaaddface.R;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     EditText loginEmail,loginPassword;
@@ -111,10 +104,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(getApplicationContext(), "Please enter email...", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
             return;
         }
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getApplicationContext(), "Please enter password!", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
             return;
         }
         firebaseAuth.signInWithEmailAndPassword(email, password)

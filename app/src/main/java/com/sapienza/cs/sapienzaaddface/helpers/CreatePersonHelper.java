@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,28 +7,29 @@ import android.os.AsyncTask;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.CreatePersonResult;
 
-public class CreatePersonGroupHelper extends AsyncTask<String, String, Boolean> {
+public class CreatePersonHelper extends AsyncTask<String, String, String> {
 
     Context context;
     ProgressDialog dialog;
 
-    public CreatePersonGroupHelper(Context context) {
+    public CreatePersonHelper(Context context) {
         this.context = context;
         dialog = new ProgressDialog(context);
     }
+
     @Override
-    protected Boolean doInBackground(String... params) {
-        publishProgress("Creating Person Group...");
+    protected String doInBackground(String... params) {
+        publishProgress("Creating Person...");
         String groupId = params[0];
         String name = params[1];
 
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            faceServiceClient.createPersonGroup(groupId, name, "User Data");
-            return true;
+            CreatePersonResult result = faceServiceClient.createPerson(groupId, name, "User Data");
+            return result.personId.toString();
         } catch(Exception e) {
             publishProgress(e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -45,7 +46,7 @@ public class CreatePersonGroupHelper extends AsyncTask<String, String, Boolean> 
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
+    protected void onPostExecute(String personId) {
         dialog.dismiss();
     }
 }

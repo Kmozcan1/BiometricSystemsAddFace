@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface.Adapters;
+package com.sapienza.cs.sapienzaaddface.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
-import com.sapienza.cs.sapienzaaddface.Enumerations.FaceGridViewMode;
-import com.sapienza.cs.sapienzaaddface.Helpers.ImageHelper;
-import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
+import com.sapienza.cs.sapienzaaddface.enumerations.FaceGridViewMode;
+import com.sapienza.cs.sapienzaaddface.helpers.ImageHelper;
+import com.sapienza.cs.sapienzaaddface.objects.ImageObject;
 import com.sapienza.cs.sapienzaaddface.R;
 
 import java.io.IOException;

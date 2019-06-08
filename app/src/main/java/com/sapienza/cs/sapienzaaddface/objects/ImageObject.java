@@ -1,10 +1,10 @@
-package com.sapienza.cs.sapienzaaddface.Objects;
+package com.sapienza.cs.sapienzaaddface.objects;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
-import com.sapienza.cs.sapienzaaddface.Helpers.ImageHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.ImageHelper;
 
 import java.util.UUID;
 

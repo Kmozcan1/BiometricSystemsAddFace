@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.Application;
 

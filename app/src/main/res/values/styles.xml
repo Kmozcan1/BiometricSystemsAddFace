@@ -2,7 +2,33 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:logo">@android:color/transparent</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="MyActionBar2" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@color/colorPrimaryDark</item>
+
+    </style>
+
+    <style name="PrimaryButton" parent="Theme.AppCompat">
+        <item name="colorButtonNormal">#00897B</item>
+    </style>
+
+    <style name="AppCompatTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar2</item>
+        <item name="actionBarStyle">@style/MyActionBar2</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="logo">@android:color/transparent</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+    </style>
 </resources>
+

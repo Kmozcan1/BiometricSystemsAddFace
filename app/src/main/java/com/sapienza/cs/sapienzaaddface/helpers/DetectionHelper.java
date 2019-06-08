@@ -1,37 +1,34 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
-import com.microsoft.projectoxford.face.contract.Person;
+import com.microsoft.projectoxford.face.contract.Face;
 
-public class GetPersonsHelper extends AsyncTask<String, String, Person[]> {
+import java.io.InputStream;
+
+public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
 
     Context context;
     ProgressDialog dialog;
 
-    public GetPersonsHelper(Context context) {
+    public DetectionHelper(Context context) {
         this.context = context;
-        dialog = new ProgressDialog(context);
     }
 
     @Override
-    protected Person[] doInBackground(String... params) {
-        publishProgress("Fetching Person List...");
-        String groupId = params[0];
-
+    protected Face[] doInBackground(InputStream... params) {
+        publishProgress("Detecting...");
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            Person[] personList = faceServiceClient.listPersons(groupId);
-            return personList;
+            return faceServiceClient.detect(params[0], true, false, null);
         } catch(Exception e) {
             publishProgress(e.getMessage());
             return null;
         }
     }
-
     @Override
     protected void onPreExecute() {
         dialog = new ProgressDialog(context);
@@ -45,7 +42,7 @@ public class GetPersonsHelper extends AsyncTask<String, String, Person[]> {
     }
 
     @Override
-    protected void onPostExecute(Person[] personList) {
+    protected void onPostExecute(Face[] faces) {
         dialog.dismiss();
     }
 }

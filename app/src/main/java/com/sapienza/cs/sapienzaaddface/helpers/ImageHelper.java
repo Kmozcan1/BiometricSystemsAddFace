@@ -30,7 +30,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;

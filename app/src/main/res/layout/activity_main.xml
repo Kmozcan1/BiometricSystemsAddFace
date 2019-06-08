@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
@@ -41,11 +41,11 @@
                 android:id="@+id/LoginButton"
                 android:layout_width="140dp"
                 android:layout_height="45dp"
-                android:textColor="#FFFF"
                 android:textAllCaps="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/colorAccent"/>
+                android:background="@color/colorPrimary"
+                android:textColor="@color/black"/>
 
             <Button
                 android:text="@string/register_text"
@@ -54,8 +54,8 @@
                 android:layout_height="45dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-                android:textColor="#FFFF"
-                android:background="@color/colorAccent"/>
+                android:background="@color/colorPrimary"
+                android:textColor="@color/black"/>
         </LinearLayout>
         <Button
             android:text="@string/i_forgot_password"

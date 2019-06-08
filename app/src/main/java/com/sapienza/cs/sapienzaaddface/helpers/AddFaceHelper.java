@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.AddPersistedFaceResult;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
-import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
+import com.sapienza.cs.sapienzaaddface.objects.ImageObject;
 
 import java.io.InputStream;
 import java.util.UUID;
@@ -20,6 +20,7 @@ public class AddFaceHelper extends AsyncTask<Object, String, AddPersistedFaceRes
     Bitmap faceMap;
     String groupId;
     String userData;
+    UUID personId;
 
     public AddFaceHelper(Context context) {
         this.context = context;
@@ -30,7 +31,7 @@ public class AddFaceHelper extends AsyncTask<Object, String, AddPersistedFaceRes
     protected AddPersistedFaceResult doInBackground(Object... params) {
         publishProgress("Adding Face...");
         groupId =  (String) params[0];
-        UUID personId = UUID.fromString((String)params[1]);
+        personId = UUID.fromString((String)params[1]);
         InputStream imageInputStream = (InputStream) params[2];
         FaceRectangle faceRectangle = (FaceRectangle) params[3];
         faceMap = (Bitmap) params[4];
@@ -60,7 +61,7 @@ public class AddFaceHelper extends AsyncTask<Object, String, AddPersistedFaceRes
     @Override
     protected void onPostExecute(AddPersistedFaceResult result) {
         String imageString = ImageHelper.bitmapToString(faceMap);
-        FirebaseHelper.insertImage(new ImageObject(result.persistedFaceId, groupId, imageString, userData));
+        FirebaseHelper.insertImage(new ImageObject(personId, groupId, imageString, userData));
         dialog.dismiss();
     }
 }

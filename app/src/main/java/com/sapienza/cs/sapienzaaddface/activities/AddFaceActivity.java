@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface;
+package com.sapienza.cs.sapienzaaddface.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -21,12 +20,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.microsoft.projectoxford.face.contract.AddPersistedFaceResult;
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceRectangle;
-import com.sapienza.cs.sapienzaaddface.Adapters.FaceGridViewAdapter;
-import com.sapienza.cs.sapienzaaddface.Helpers.AddFaceHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.CreatePersonHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.DetectionHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.FirebaseHelper;
-import com.sapienza.cs.sapienzaaddface.Helpers.TrainPersonGroupHelper;
+import com.sapienza.cs.sapienzaaddface.adapters.FaceGridViewAdapter;
+import com.sapienza.cs.sapienzaaddface.helpers.AddFaceHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.CreatePersonHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.DetectionHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.FirebaseHelper;
+import com.sapienza.cs.sapienzaaddface.helpers.TrainPersonGroupHelper;
+import com.sapienza.cs.sapienzaaddface.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +53,7 @@ public class AddFaceActivity extends Activity {
         setContentView(R.layout.activity_addface);
         fAuth= FirebaseAuth.getInstance();
 
-        GridView gridView = findViewById(R.id.gridview_faces);
+        GridView gridView = findViewById(R.id.edit_gridview_face);
         gridView.setOnItemClickListener(new GridView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
@@ -168,7 +168,7 @@ public class AddFaceActivity extends Activity {
                 Context context = getApplicationContext();
                 int duration = Toast.LENGTH_SHORT;
                 Toast.makeText(context, NO_FACES_IN_PHOTO, duration).show();
-                GridView gridView = findViewById(R.id.gridview_faces);
+                GridView gridView = findViewById(R.id.edit_gridview_face);
                 gridView.setAdapter(null);
             }
             else {
@@ -177,7 +177,7 @@ public class AddFaceActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                GridView gridView = findViewById(R.id.gridview_faces);
+                GridView gridView = findViewById(R.id.edit_gridview_face);
                 gridView.setAdapter(faceGridViewAdapter);
             }
         }
@@ -242,7 +242,4 @@ public class AddFaceActivity extends Activity {
         }
         return true;
     }
-
-
-
 }

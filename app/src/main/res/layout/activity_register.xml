@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".activities.RegisterActivity">
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,9 +38,10 @@
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginTop="50dp"
-            android:background="@color/colorAccent"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/black"
             android:text="@string/registerText"
-            android:textColor="#FFFF" />
+            />
 
 
         <Button
@@ -50,7 +51,7 @@
             android:textAllCaps="false"
             android:id="@+id/loginPageButton"
             android:background="@null"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimary"
             android:layout_marginBottom="10dp"
             />
         <ProgressBar

@@ -1,4 +1,4 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.Person;
 import com.microsoft.projectoxford.face.contract.PersonFace;
-import com.sapienza.cs.sapienzaaddface.Objects.ImageObject;
+import com.sapienza.cs.sapienzaaddface.objects.ImageObject;
 import java.util.ArrayList;
 import java.util.List;
 

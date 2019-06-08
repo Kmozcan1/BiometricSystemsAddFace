@@ -1,34 +1,39 @@
-package com.sapienza.cs.sapienzaaddface.Helpers;
+package com.sapienza.cs.sapienzaaddface.helpers;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
-import com.microsoft.projectoxford.face.contract.Face;
 
-import java.io.InputStream;
-
-public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
+public class CreatePersonGroupHelper extends AsyncTask<String, String, Boolean> {
 
     Context context;
     ProgressDialog dialog;
 
-    public DetectionHelper(Context context) {
+    public CreatePersonGroupHelper(Context context) {
         this.context = context;
+        dialog = new ProgressDialog(context);
     }
-
     @Override
-    protected Face[] doInBackground(InputStream... params) {
-        publishProgress("Detecting...");
+    protected Boolean doInBackground(String... params) {
+        publishProgress("Creating Person Group...");
+        String groupId = params[0];
+        String name = params[1];
+
+        if (name == null)
+            name = "No Name";
+
         FaceServiceClient faceServiceClient = ConnectionHelper.getFaceServiceClient();
         try {
-            return faceServiceClient.detect(params[0], true, false, null);
+            faceServiceClient.createPersonGroup(groupId, name, "User Data");
+            return true;
         } catch(Exception e) {
             publishProgress(e.getMessage());
-            return null;
+            return false;
         }
     }
+
     @Override
     protected void onPreExecute() {
         dialog = new ProgressDialog(context);
@@ -42,7 +47,7 @@ public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
     }
 
     @Override
-    protected void onPostExecute(Face[] faces) {
+    protected void onPostExecute(Boolean result) {
         dialog.dismiss();
     }
 }
