@@ -10,12 +10,12 @@
     <string name="addFaceButton">Add Face</string>
     <string name="deleteHint">Long-tap an image to delete it.</string>
     <string name="mainPage_or">OR</string>
-    <string name="register_text">Register!</string>
+    <string name="register_text">Register</string>
     <string name="login_text">Login</string>
     <string name="hintPass">Password</string>
     <string name="hintEmail">E-mail</string>
     <string name="alreadyRegistered">Already Registered? Sign in!</string>
-    <string name="registerText">Register!</string>
+    <string name="registerText">Register</string>
     <string name="passwordText">Password</string>
     <string name="emailText">E-mail</string>
     <string name="i_forgot_password">Forgot my password</string>
@@ -26,7 +26,8 @@
     <string name="resend_otp_formatted">Adding Fingerprint (%1$d)</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="stop">Stop</string>
-    <string name="fingerprint_hint">Please insert put your finger to the fingerprint reader before the timer expires</string>
+    <string name="fingerprint_hint">Please put your finger to the fingerprint reader before the timer expires</string>
     <string name="settings_hint">Please refer to the manual to see your fingerprint reader ID</string>
     <string name="device_id_hint">Device ID</string>
+    <string name="save_device_id">Save Device ID</string>
 </resources>

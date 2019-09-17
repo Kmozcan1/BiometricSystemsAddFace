@@ -48,6 +48,7 @@ public class ViewPersonGroupActivity extends Activity {
             FirebaseHelper.setGroupId(null);
         }
 
+        getActionBar().show();
         faceGridView = findViewById(R.id.gridview_people);
         //faceGridViewAdapter = new FaceGridViewAdapter(getBaseContext(), null);
 
@@ -58,6 +59,7 @@ public class ViewPersonGroupActivity extends Activity {
                         public void onCallBack(Object value, ValueEventListener listener, DatabaseReference query) {
                             FirebaseHelper.setGroupId((String) value);
                             //new ListPersons(ViewPersonGroupActivity.this).execute(FirebaseHelper.getGroupId());
+                            query.removeEventListener(listener);
                             getImagesFromFirebase();
                         }
                     });
@@ -87,7 +89,7 @@ public class ViewPersonGroupActivity extends Activity {
                                 ImageObject image = (ImageObject)faceGridViewAdapter.getItem(position);
                                 new DeletePerson(ViewPersonGroupActivity.this).execute(image.getGroupId(), image.getUid());
                             }
-                        }).setNegativeButton(android.R.string.no, null);
+                        }).setNegativeButton(android.R.string.no, null).show();
                 return true;
             }
         });
@@ -189,8 +191,7 @@ public class ViewPersonGroupActivity extends Activity {
                     faceGridViewAdapter = new FaceGridViewAdapter(getBaseContext(), faceList);
                     faceGridView = findViewById(R.id.gridview_people);
                     faceGridView.setAdapter(faceGridViewAdapter);
-
-
+                    query.removeEventListener(listener);
                 }
             });
     }

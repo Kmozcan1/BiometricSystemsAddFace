@@ -12,7 +12,7 @@ import java.io.InputStream;
 public class DetectionHelper extends AsyncTask<InputStream, String, Face[]> {
 
     Context context;
-    ProgressDialog dialog;
+    private ProgressDialog dialog;
 
     public DetectionHelper(Context context) {
         this.context = context;

@@ -23,7 +23,6 @@ public final class FirebaseHelper {
     private static String groupId;
     static {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.setPersistenceEnabled(true);
     }
 
     public static String getGroupId() {
@@ -41,22 +40,23 @@ public final class FirebaseHelper {
     private static final int ACTIVE_TIME = 30;
 
 
-    public final static void getSingleFingerprint(Context c, String personId, final FirebaseListener listener) {
+    public final static void getSingleFingerprint(Context c, final String personId, final FirebaseListener listener) {
         context = c;
         dialog = new ProgressDialog(context);
         dialog.setTitle("Please Wait");
-        dialog.show();
         dialog.setMessage("Getting Faces...");
         final DatabaseReference reference = firebaseDatabase.getReference();
-        final Query query = reference.child("deneme").child("activePersonID");
+        final Query query = reference.child("deneme");
 
 
         query.addValueEventListener((new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if(snapshot.exists()) {
-                    int enrollFinished = snapshot.child("enrollFinished").getValue(Integer.class);
-                    listener.onCallBack(enrollFinished, this, query.getRef());
+                    if (snapshot.child("activeUserID").getValue(String.class).equals(personId)) {
+                        int enrollFinished = snapshot.child("enrollFinished").getValue(Integer.class);
+                        listener.onCallBack(enrollFinished, this, query.getRef());
+                    }
                 } else {
                     listener.onCallBack(0, this, query.getRef());
                 }
@@ -116,6 +116,7 @@ public final class FirebaseHelper {
         dialog.setMessage("Getting Faces...");
         final DatabaseReference reference = firebaseDatabase.getReference();
         final Query query = reference.child("images").orderByChild("groupId").equalTo(groupId);
+        System.out.println(groupId);
         final List<ImageObject> imageList = new ArrayList<>();
 
         query.addValueEventListener((new ValueEventListener() {
@@ -128,6 +129,7 @@ public final class FirebaseHelper {
                         String imageString = imageObj.child("image").getValue(String.class);
                         String groupId = imageObj.child("groupId").getValue(String.class);
                         String personName = imageObj.child("personName").getValue(String.class);
+                        System.out.println(personName);
                         ImageObject image = new ImageObject(uid, groupId, imageString, personName);
                         imageList.add(image);
                     }
@@ -193,6 +195,6 @@ public final class FirebaseHelper {
         reference.child("deneme").child("activeTime").setValue(ACTIVE_TIME);
         reference.child("deneme").child("activeUserID").setValue(personId);
         reference.child("deneme").child("enrollFinished").setValue(0);
-        reference.child("deneme").child("needsEnroll").setValue(0);
+        reference.child("deneme").child("needsEnroll").setValue(1);
     }
 }
